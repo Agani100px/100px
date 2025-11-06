@@ -60,16 +60,6 @@ export default async function AlbumPage({ params }: AlbumPageProps) {
   const serviceName = service.acf?.service_name || service.title.rendered
   const albums = service.acf?.albums || []
   
-  // Debug logging
-  console.log('Album Page Debug:', {
-    slug,
-    rawAlbumSlug,
-    albumSlug,
-    albumsCount: albums.length,
-    albumNames: albums.map(a => a.album_name),
-    albumSlugs: albums.map(a => generateSlug(a.album_name)),
-  })
-  
   const album = albums.find(
     (a) => {
       const generatedSlug = generateSlug(a.album_name)
@@ -78,12 +68,6 @@ export default async function AlbumPage({ params }: AlbumPageProps) {
   )
 
   if (!album) {
-    console.error('Album not found:', {
-      requestedSlug: albumSlug,
-      rawSlug: rawAlbumSlug,
-      availableSlugs: albums.map(a => generateSlug(a.album_name)),
-      availableNames: albums.map(a => a.album_name),
-    })
     notFound()
   }
 
