@@ -370,6 +370,12 @@ export interface WordPressHeader {
   acf?: ACFHeaderFields
 }
 
+export interface ACFServiceAlbum {
+  album_name?: string
+  album_cover?: ACFBackgroundImage
+  service_gallery?: ACFBackgroundImage[]
+}
+
 export interface ACFServiceFields {
   service_name?: string
   service_price?: string
@@ -377,6 +383,7 @@ export interface ACFServiceFields {
   service_description?: string
   service_image?: ACFBackgroundImage
   service_gallery?: ACFBackgroundImage[]
+  albums?: ACFServiceAlbum[]
   service_button_text?: string
   service_button_link?: ACFMenuLink
 }

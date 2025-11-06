@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Metadata } from "next"
 import Image from "next/image"
 import { ServiceGallery } from "@/components/service-gallery"
+import { generateSlug } from "@/lib/utils"
 
 interface ServicePageProps {
   params: Promise<{ slug: string }>
@@ -52,6 +53,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const serviceDescription = service.acf?.service_description || ""
   const serviceImage = service.acf?.service_image
   const serviceGallery = service.acf?.service_gallery || []
+  const albums = service.acf?.albums || []
   const buttonText = service.acf?.service_button_text || "BOOK YOUR SESSION"
   const buttonLink = service.acf?.service_button_link?.url || "#"
 
@@ -133,15 +135,62 @@ export default async function ServicePage({ params }: ServicePageProps) {
           </div>
         </div>
 
-        {/* Gallery Section */}
-        {serviceGallery.length > 0 && (
+        {/* Albums Section - Show album covers if albums exist, otherwise show direct gallery */}
+        {albums.length > 0 ? (
+          <div className="mt-12 sm:mt-16">
+            <h2 className="mb-8 sm:mb-12 text-white" style={{ fontSize: '18px', fontWeight: 400 }}>
+              {serviceName} Albums
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {albums.map((album, index) => {
+                const albumSlug = generateSlug(album.album_name) || `album-${index}`
+                return (
+                  <Link
+                    key={index}
+                    href={`/services/${slug}/${albumSlug}`}
+                    className="relative rounded-xl overflow-hidden bg-black group border border-[#191919] block"
+                  >
+                    <div className="relative w-full h-[300px] sm:h-[400px]">
+                      {album.album_cover?.url ? (
+                        album.album_cover.url.startsWith('http://100px.local') ? (
+                          <img
+                            src={album.album_cover.url}
+                            alt={album.album_name || "Album Cover"}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={album.album_cover.url}
+                            alt={album.album_name || "Album Cover"}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        )
+                      ) : (
+                        <div className="w-full h-full bg-gray-900 flex items-center justify-center">
+                          <span className="text-white/50 text-sm">No Album Cover</span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/40 flex items-end p-6">
+                        <h3 className="text-white text-xl font-semibold">
+                          {album.album_name}
+                        </h3>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ) : serviceGallery.length > 0 ? (
           <div className="mt-12 sm:mt-16">
             <h2 className="mb-8 sm:mb-12 text-white" style={{ fontSize: '18px', fontWeight: 400 }}>
               {serviceName} Gallery
             </h2>
             <ServiceGallery gallery={serviceGallery} />
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   )

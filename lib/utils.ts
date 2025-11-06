@@ -14,3 +14,19 @@ export function formatDate(dateString: string): string {
   }).format(date)
 }
 
+/**
+ * Generate a URL-friendly slug from a string
+ * Handles special characters, spaces, and edge cases
+ */
+export function generateSlug(text: string | undefined | null): string {
+  if (!text) return ''
+  
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters except word chars, spaces, and hyphens
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+}
+
