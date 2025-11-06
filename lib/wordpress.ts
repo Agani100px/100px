@@ -282,6 +282,12 @@ export interface ACFGalleryFields {
   gallery_items?: ACFGalleryAlbum[]
 }
 
+export interface ACFServicesPageFields {
+  heading?: string
+  sub_heading?: string
+  background_image?: ACFBackgroundImage
+}
+
 export interface WordPressPage {
   id: number
   date: string
@@ -304,7 +310,7 @@ export interface WordPressPage {
     protected: boolean
   }
   featured_media: number
-  acf?: ACFHeroFields | ACFContactFields | ACFGalleryFields
+  acf?: ACFHeroFields | ACFContactFields | ACFGalleryFields | ACFServicesPageFields
 }
 
 export interface ACFMenuLink {
@@ -670,6 +676,53 @@ export async function fetchWordPressGalleryPage(): Promise<WordPressPage | null>
     return pages[0] as WordPressPage
   } catch (error) {
     console.error('Error fetching WordPress gallery page:', error)
+    if (error instanceof Error) {
+      console.error('Error message:', error.message)
+    }
+    return null
+  }
+}
+
+export async function fetchWordPressServicesPage(): Promise<WordPressPage | null> {
+  try {
+    if (!WORDPRESS_API_URL) {
+      console.error('NEXT_PUBLIC_WORDPRESS_API_URL is not set in environment variables')
+      return null
+    }
+
+    const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/pages?slug=services`
+    
+    console.log('Fetching WordPress services page from:', url)
+    
+    const requestHeaders: HeadersInit = {
+      'Content-Type': 'application/json',
+    }
+    
+    if (WORDPRESS_API_KEY) {
+      requestHeaders['Authorization'] = `Bearer ${WORDPRESS_API_KEY}`
+    }
+    
+    const response = await fetch(url, {
+      headers: requestHeaders,
+      next: { revalidate: 300 },
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`WordPress API error (${response.status}):`, response.statusText, errorText)
+      throw new Error(`WordPress API error: ${response.status} ${response.statusText}`)
+    }
+    
+    const pages = await response.json()
+    
+    if (!pages || pages.length === 0) {
+      console.log('No services page found')
+      return null
+    }
+    
+    return pages[0] as WordPressPage
+  } catch (error) {
+    console.error('Error fetching WordPress services page:', error)
     if (error instanceof Error) {
       console.error('Error message:', error.message)
     }
