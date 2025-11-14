@@ -50,6 +50,9 @@ export function mapWordPressUrlToNextRoute(url: string | undefined | null): stri
       '/services': '/services',
       '/gallery': '/gallery',
       '/contact-us': '/contact-us',
+      '/privacy-policy': '/privacy-policy',
+      '/refund-policy': '/refund-policy',
+      '/terms-conditions': '/terms-conditions',
     }
     
     // Check if path matches any mapped route
@@ -85,6 +88,9 @@ export function mapWordPressUrlToNextRoute(url: string | undefined | null): stri
     if (url.includes('/services')) return '/services'
     if (url.includes('/gallery')) return '/gallery'
     if (url.includes('/contact-us')) return '/contact-us'
+    if (url.includes('/privacy-policy')) return '/privacy-policy'
+    if (url.includes('/refund-policy')) return '/refund-policy'
+    if (url.includes('/terms-conditions')) return '/terms-conditions'
     
     return '#'
   }

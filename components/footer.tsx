@@ -5,6 +5,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { WordPressFooter } from "@/lib/wordpress"
 import { Phone, MapPin, MessageCircle, Mail, Clock, Facebook, Linkedin, Instagram, Share2 } from "lucide-react"
+import { mapWordPressUrlToNextRoute } from "@/lib/utils"
 
 interface FooterProps {
   footerData: WordPressFooter | null
@@ -118,7 +119,8 @@ export function Footer({ footerData }: FooterProps) {
         {menu && menu.length > 0 && (
           <nav className="flex justify-center flex-wrap gap-4 sm:gap-6 md:gap-8 mb-8">
             {menu.map((item, index) => {
-              const href = item.menu_item_link?.url || "#"
+              const wordPressUrl = item.menu_item_link?.url || "#"
+              const href = mapWordPressUrlToNextRoute(wordPressUrl)
               const isActive = pathname === href || (href === "#" && pathname === "/")
               
               return (
@@ -141,7 +143,8 @@ export function Footer({ footerData }: FooterProps) {
         {important_links && important_links.length > 0 && (
           <div className="flex justify-center flex-wrap gap-4 sm:gap-6 mb-12">
             {important_links.map((link, index) => {
-              const href = link.important_links?.url || "#"
+              const wordPressUrl = link.important_links?.url || "#"
+              const href = mapWordPressUrlToNextRoute(wordPressUrl)
               return (
                 <div key={index} className="flex items-center gap-4">
                   {index > 0 && <span className="text-white/50">|</span>}
