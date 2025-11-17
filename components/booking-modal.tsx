@@ -62,32 +62,68 @@ export function BookingModal({ open, onOpenChange }: BookingModalProps) {
     }
 
     setIsSubmitting(true)
+    setErrors({})
 
-    // TODO: Replace with your actual API endpoint
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const WORDPRESS_API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL
       
-      console.log("Form submitted:", formData)
-      
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        businessType: "",
-        businessName: "",
-        website: "",
+      if (!WORDPRESS_API_URL) {
+        throw new Error('WordPress API URL is not configured')
+      }
+
+      // Build message from booking form data
+      const message = [
+        formData.businessType && `Business Type: ${formData.businessType}`,
+        formData.businessName && `Business Name: ${formData.businessName}`,
+        formData.website && `Website: ${formData.website}`,
+      ].filter(Boolean).join('\n') || 'Booking appointment request'
+
+      const response = await fetch(`${WORDPRESS_API_URL}/wp-json/hundredpx/v1/form-submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: 'Booking Appointment Request',
+          message: message,
+        }),
       })
-      
-      // Close modal
-      onOpenChange(false)
-      
-      // Show success message (you can add a toast notification here)
-      alert("Thank you! We'll get back to you soon.")
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to submit booking request')
+      }
+
+      if (result.success) {
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          businessType: "",
+          businessName: "",
+          website: "",
+        })
+        
+        // Close modal
+        onOpenChange(false)
+        
+        // Show success message
+        alert("Thank you! We'll get back to you soon.")
+      } else {
+        throw new Error(result.message || 'Failed to submit booking request')
+      }
     } catch (error) {
       console.error("Error submitting form:", error)
-      alert("Something went wrong. Please try again.")
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Something went wrong. Please try again."
+      alert(errorMessage)
+      setErrors({ submit: errorMessage })
     } finally {
       setIsSubmitting(false)
     }

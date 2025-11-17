@@ -57,30 +57,59 @@ export function ContactForm() {
 
     setIsSubmitting(true)
     setSubmitSuccess(false)
+    setErrors({})
 
-    // TODO: Replace with your actual API endpoint
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const WORDPRESS_API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL
       
-      console.log("Contact form submitted:", formData)
-      
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
+      if (!WORDPRESS_API_URL) {
+        throw new Error('WordPress API URL is not configured')
+      }
+
+      const response = await fetch(`${WORDPRESS_API_URL}/wp-json/hundredpx/v1/form-submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || '',
+          subject: formData.subject || 'Contact Form Submission',
+          message: formData.message,
+        }),
       })
-      setErrors({})
-      setSubmitSuccess(true)
-      
-      // Hide success message after 5 seconds
-      setTimeout(() => setSubmitSuccess(false), 5000)
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to send message')
+      }
+
+      if (result.success) {
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        })
+        setErrors({})
+        setSubmitSuccess(true)
+        
+        // Hide success message after 5 seconds
+        setTimeout(() => setSubmitSuccess(false), 5000)
+      } else {
+        throw new Error(result.message || 'Failed to send message')
+      }
     } catch (error) {
       console.error("Error submitting contact form:", error)
-      setErrors({ submit: "Failed to send message. Please try again." })
+      setErrors({ 
+        submit: error instanceof Error 
+          ? error.message 
+          : "Failed to send message. Please try again." 
+      })
     } finally {
       setIsSubmitting(false)
     }
