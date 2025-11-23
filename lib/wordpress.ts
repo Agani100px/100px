@@ -70,7 +70,9 @@ export interface WordPressMedia {
   }
 }
 
-const WORDPRESS_API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || ''
+// Normalize API URL to remove trailing slash
+const WORDPRESS_API_URL_RAW = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || ''
+const WORDPRESS_API_URL = WORDPRESS_API_URL_RAW.replace(/\/+$/, '')
 const WORDPRESS_API_KEY = process.env.WORDPRESS_API_KEY || ''
 
 if (!WORDPRESS_API_URL) {
@@ -173,7 +175,9 @@ export async function fetchWordPressPosts(params?: {
     
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/posts?${searchParams.toString()}`
     
-    console.log('Fetching WordPress posts from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress posts from:', url)
+    }
     
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
@@ -195,7 +199,9 @@ export async function fetchWordPressPosts(params?: {
     }
     
     const data = await response.json()
-    console.log(`Successfully fetched ${data.length} posts from WordPress`)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Successfully fetched ${data.length} posts from WordPress`)
+    }
     return data
   } catch (error) {
     console.error('Error fetching WordPress posts:', error)
@@ -697,7 +703,9 @@ export async function fetchWordPressPage(slug: string): Promise<WordPressPage | 
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/pages?slug=${slug}`
     
-    console.log('Fetching WordPress page from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress page from:', url)
+    }
     
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
@@ -744,7 +752,9 @@ export async function fetchWordPressHeader(): Promise<WordPressHeader | null> {
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/header?slug=header`
     
-    console.log('Fetching WordPress header from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress header from:', url)
+    }
     
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -767,21 +777,27 @@ export async function fetchWordPressHeader(): Promise<WordPressHeader | null> {
     
     const headerData = await response.json()
     
-    console.log('Header API Response:', JSON.stringify(headerData, null, 2))
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Header API Response:', JSON.stringify(headerData, null, 2))
+    }
     
     if (!headerData || headerData.length === 0) {
-      console.log('No header found')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No header found')
+      }
       return null
     }
     
     const header = headerData[0] as WordPressHeader
-    console.log('Parsed Header:', {
-      id: header.id,
-      hasACF: !!header.acf,
-      logoUrl: header.acf?.logo?.url,
-      menuItemsCount: header.acf?.menu_items?.length,
-      buttonText: header.acf?.quick_button_text,
-    })
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Parsed Header:', {
+        id: header.id,
+        hasACF: !!header.acf,
+        logoUrl: header.acf?.logo?.url,
+        menuItemsCount: header.acf?.menu_items?.length,
+        buttonText: header.acf?.quick_button_text,
+      })
+    }
     
     const normalizedHeader: WordPressHeader = header.acf
       ? {
@@ -812,7 +828,9 @@ export async function fetchWordPressGalleryPage(): Promise<WordPressPage | null>
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/pages?slug=gallery`
     
-    console.log('Fetching WordPress gallery page from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress gallery page from:', url)
+    }
     
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -859,7 +877,9 @@ export async function fetchWordPressServicesPage(): Promise<WordPressPage | null
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/pages?slug=services`
     
-    console.log('Fetching WordPress services page from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress services page from:', url)
+    }
     
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -906,7 +926,9 @@ export async function fetchWordPressContactPage(): Promise<WordPressPage | null>
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/pages?slug=contact-us`
     
-    console.log('Fetching WordPress contact page from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress contact page from:', url)
+    }
     
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -953,7 +975,9 @@ export async function fetchWordPressFooter(): Promise<WordPressFooter | null> {
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/footer?slug=footer`
     
-    console.log('Fetching WordPress footer from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress footer from:', url)
+    }
     
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -976,21 +1000,27 @@ export async function fetchWordPressFooter(): Promise<WordPressFooter | null> {
     
     const footerData = await response.json()
     
-    console.log('Footer API Response:', JSON.stringify(footerData, null, 2))
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Footer API Response:', JSON.stringify(footerData, null, 2))
+    }
     
     if (!footerData || footerData.length === 0) {
-      console.log('No footer found')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No footer found')
+      }
       return null
     }
     
     const footer = footerData[0] as WordPressFooter
-    console.log('Parsed Footer:', {
-      id: footer.id,
-      hasACF: !!footer.acf,
-      logoUrl: footer.acf?.logo?.url,
-      menuItemsCount: footer.acf?.menu?.length,
-      socialMediaCount: footer.acf?.social_media?.length,
-    })
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Parsed Footer:', {
+        id: footer.id,
+        hasACF: !!footer.acf,
+        logoUrl: footer.acf?.logo?.url,
+        menuItemsCount: footer.acf?.menu?.length,
+        socialMediaCount: footer.acf?.social_media?.length,
+      })
+    }
     
     const normalizedFooter: WordPressFooter = footer.acf
       ? {
@@ -1069,7 +1099,9 @@ export async function fetchWordPressServices(params?: {
         }
       }
 
-      console.log(`Successfully fetched ${allServices.length} services from WordPress (all pages)`)
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Successfully fetched ${allServices.length} services from WordPress (all pages)`)
+      }
       return allServices
     }
 
@@ -1085,7 +1117,9 @@ export async function fetchWordPressServices(params?: {
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/service?${searchParams.toString()}`
 
-    console.log('Fetching WordPress services from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress services from:', url)
+    }
 
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -1107,7 +1141,9 @@ export async function fetchWordPressServices(params?: {
     }
 
     const data = await response.json()
-    console.log(`Successfully fetched ${data.length} services from WordPress`)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Successfully fetched ${data.length} services from WordPress`)
+    }
     return data as WordPressService[]
   } catch (error) {
     console.error('Error fetching WordPress services:', error)
@@ -1127,7 +1163,9 @@ export async function fetchWordPressService(slug: string): Promise<WordPressServ
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/service?slug=${slug}`
 
-    console.log('Fetching WordPress service from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress service from:', url)
+    }
 
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -1170,7 +1208,7 @@ export async function fetchHeroContent(): Promise<HeroContent> {
     const page = await fetchWordPressPage('home')
     
     // Debug: Log the full page object to see what we're getting
-    if (page) {
+    if (page && process.env.NODE_ENV === 'development') {
       console.log('Page fetched:', {
         id: page.id,
         slug: page.slug,
@@ -1180,7 +1218,9 @@ export async function fetchHeroContent(): Promise<HeroContent> {
     }
     
     if (!page) {
-      console.log('No home page found, using defaults')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No home page found, using defaults')
+      }
       return {
         preHeadline: "Capturing Life's Precious Moments with Artistic Excellence",
         headline: "Your Story, Our Lens",
@@ -1194,9 +1234,11 @@ export async function fetchHeroContent(): Promise<HeroContent> {
     
     // If ACF is not available, warn and use defaults
     if (!acf) {
-      console.warn('⚠️ ACF fields not found in page object.')
-      console.warn('To fix this, enable ACF REST API. See ACF_SETUP.md for instructions.')
-      console.log('Page object keys:', Object.keys(page))
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ ACF fields not found in page object.')
+        console.warn('To fix this, enable ACF REST API. See ACF_SETUP.md for instructions.')
+        console.log('Page object keys:', Object.keys(page))
+      }
       
       // Use defaults but you can manually set the image URL here as a temporary fix
       return {
@@ -1211,11 +1253,13 @@ export async function fetchHeroContent(): Promise<HeroContent> {
       }
     }
     
-    console.log('✅ Hero content fetched successfully from ACF:', {
-      hasBackgroundImage: !!acf?.background_image,
-      backgroundImageUrl: acf?.background_image?.url,
-      hasHeading: !!acf?.hero_heading,
-    })
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ Hero content fetched successfully from ACF:', {
+        hasBackgroundImage: !!acf?.background_image,
+        backgroundImageUrl: acf?.background_image?.url,
+        hasHeading: !!acf?.hero_heading,
+      })
+    }
     
     return {
       preHeadline: acf?.hero_subheading || "Capturing Life's Precious Moments with Artistic Excellence",
@@ -1330,7 +1374,9 @@ export async function fetchWordPressAdditionalServices(params?: {
         }
       }
 
-      console.log(`Successfully fetched ${allServices.length} additional services from WordPress (all pages)`)
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Successfully fetched ${allServices.length} additional services from WordPress (all pages)`)
+      }
       return allServices
     }
 
@@ -1346,7 +1392,9 @@ export async function fetchWordPressAdditionalServices(params?: {
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/additional-service?${searchParams.toString()}`
 
-    console.log('Fetching WordPress additional services from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress additional services from:', url)
+    }
 
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -1368,7 +1416,9 @@ export async function fetchWordPressAdditionalServices(params?: {
     }
 
     const data = await response.json()
-    console.log(`Successfully fetched ${data.length} additional services from WordPress`)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Successfully fetched ${data.length} additional services from WordPress`)
+    }
     return data as WordPressAdditionalService[]
   } catch (error) {
     console.error('Error fetching WordPress additional services:', error)
@@ -1388,7 +1438,9 @@ export async function fetchWordPressAdditionalService(slug: string): Promise<Wor
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/additional-service?slug=${slug}`
 
-    console.log('Fetching WordPress additional service from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress additional service from:', url)
+    }
 
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -1477,7 +1529,9 @@ export async function fetchWordPressTestimonials(params?: {
         }
       }
 
-      console.log(`Successfully fetched ${allTestimonials.length} testimonials from WordPress (all pages)`)
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Successfully fetched ${allTestimonials.length} testimonials from WordPress (all pages)`)
+      }
       return allTestimonials
     }
 
@@ -1493,7 +1547,9 @@ export async function fetchWordPressTestimonials(params?: {
 
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/testimonial?${searchParams.toString()}`
 
-    console.log('Fetching WordPress testimonials from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress testimonials from:', url)
+    }
 
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -1515,7 +1571,9 @@ export async function fetchWordPressTestimonials(params?: {
     }
 
     const data = await response.json()
-    console.log(`Successfully fetched ${data.length} testimonials from WordPress`)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Successfully fetched ${data.length} testimonials from WordPress`)
+    }
     return data as WordPressTestimonial[]
   } catch (error) {
       console.error('Error fetching WordPress testimonials:', error)
@@ -1536,7 +1594,9 @@ export async function fetchWordPressWhyUs(slug?: string): Promise<WordPressWhyUs
     const targetSlug = slug || 'why-choose'
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/why-us?slug=${targetSlug}`
 
-    console.log('Fetching WordPress why-us from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress why-us from:', url)
+    }
 
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -1560,7 +1620,9 @@ export async function fetchWordPressWhyUs(slug?: string): Promise<WordPressWhyUs
     const whyUsData = await response.json()
 
     if (!whyUsData || whyUsData.length === 0) {
-      console.log('No why-us found')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No why-us found')
+      }
       return null
     }
 
@@ -1576,12 +1638,14 @@ export async function fetchWordPressWhyUs(slug?: string): Promise<WordPressWhyUs
         }
       : whyUs
 
-    console.log('Parsed Why Us:', {
-      id: normalizedWhyUs.id,
-      hasACF: !!normalizedWhyUs.acf,
-      heading: normalizedWhyUs.acf?.heading,
-      itemsCount: normalizedWhyUs.acf?.why_us_?.length,
-    })
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Parsed Why Us:', {
+        id: normalizedWhyUs.id,
+        hasACF: !!normalizedWhyUs.acf,
+        heading: normalizedWhyUs.acf?.heading,
+        itemsCount: normalizedWhyUs.acf?.why_us_?.length,
+      })
+    }
 
     return normalizedWhyUs
   } catch (error) {
@@ -1603,7 +1667,9 @@ export async function fetchWordPressFAQ(slug?: string): Promise<WordPressFAQ | n
     const targetSlug = slug || 'faq'
     const url = `${WORDPRESS_API_URL}/wp-json/wp/v2/faq?slug=${targetSlug}`
 
-    console.log('Fetching WordPress FAQ from:', url)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching WordPress FAQ from:', url)
+    }
 
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -1627,18 +1693,22 @@ export async function fetchWordPressFAQ(slug?: string): Promise<WordPressFAQ | n
     const faqData = await response.json()
 
     if (!faqData || faqData.length === 0) {
-      console.log('No FAQ found')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No FAQ found')
+      }
       return null
     }
 
     const faq = faqData[0] as WordPressFAQ
 
-    console.log('Parsed FAQ:', {
-      id: faq.id,
-      hasACF: !!faq.acf,
-      heading: faq.acf?.heading,
-      itemsCount: faq.acf?.faq?.length,
-    })
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Parsed FAQ:', {
+        id: faq.id,
+        hasACF: !!faq.acf,
+        heading: faq.acf?.heading,
+        itemsCount: faq.acf?.faq?.length,
+      })
+    }
 
     return faq
   } catch (error) {
