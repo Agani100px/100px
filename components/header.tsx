@@ -51,7 +51,7 @@ export function Header({ headerData }: HeaderProps) {
         <nav className="relative flex items-center justify-between rounded-full px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-white/10 via-white/5 to-white/10 shadow-2xl">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 z-10 shrink-0">
-            {logo ? (
+            {logo && (
               logo.startsWith('http://100px.local') ? (
                 <img
                   src={logo}
@@ -68,11 +68,6 @@ export function Header({ headerData }: HeaderProps) {
                   priority
                 />
               )
-            ) : (
-              <div className="flex items-center space-x-0">
-                <span className="text-2xl sm:text-3xl font-bold text-white">100</span>
-                <span className="text-xl sm:text-2xl font-bold text-[#FF9BFF]">PX</span>
-              </div>
             )}
           </Link>
           

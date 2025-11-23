@@ -44,10 +44,6 @@ export function Footer({ footerData }: FooterProps) {
       <footer className="bg-black text-white py-12 sm:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="flex items-center justify-center space-x-0 mb-4">
-              <span className="text-3xl sm:text-4xl font-bold text-white">100</span>
-              <span className="text-2xl sm:text-3xl font-bold text-[#FF9BFF]">PX</span>
-            </div>
             <p className="text-sm text-white/70">&copy; {new Date().getFullYear()} 100PX. All rights reserved.</p>
           </div>
         </div>
@@ -64,9 +60,9 @@ export function Footer({ footerData }: FooterProps) {
     <footer className="bg-black text-white py-12 sm:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          {logo?.url ? (
-            logo.url.startsWith('http://100px.local') ? (
+        {logo?.url && (
+          <div className="flex justify-center mb-8">
+            {logo.url.startsWith('http://100px.local') ? (
               <img
                 src={logo.url}
                 alt="100px Logo"
@@ -80,14 +76,9 @@ export function Footer({ footerData }: FooterProps) {
                 height={60}
                 className="h-12 sm:h-16 w-auto object-contain"
               />
-            )
-          ) : (
-            <div className="flex items-center space-x-0">
-              <span className="text-3xl sm:text-4xl font-bold text-white">100</span>
-              <span className="text-2xl sm:text-3xl font-bold text-[#FF9BFF]">PX</span>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* Social Media Icons */}
         {social_media && social_media.length > 0 && (
