@@ -67,7 +67,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Google tag (gtag.js) */}
+        {/* Google tag (gtag.js) sending again */}
         <Script
           id="gtag-base"
           src="https://www.googletagmanager.com/gtag/js?id=G-YDVLYB3J82"
