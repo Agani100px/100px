@@ -67,6 +67,26 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Google tag (gtag.js) sending again */}
+        <Script
+          id="gtag-base"
+          src="https://www.googletagmanager.com/gtag/js?id=G-YDVLYB3J82"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-YDVLYB3J82');
+            `,
+          }}
+        />
+        {/* End Google tag */}
+
         {/* Meta Pixel Code */}
         <Script
           id="fb-pixel-base"
