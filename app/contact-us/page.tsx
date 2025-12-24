@@ -1,5 +1,4 @@
 import { fetchWordPressContactPage } from "@/lib/wordpress"
-import { notFound } from "next/navigation"
 import { Metadata } from "next"
 import Image from "next/image"
 import { ContactForm } from "@/components/contact-form"
@@ -25,11 +24,8 @@ const getContactIcon = (name: string) => {
 export default async function ContactPage() {
   const contactPage = await fetchWordPressContactPage()
 
-  if (!contactPage) {
-    notFound()
-  }
-
-  const acf = contactPage.acf as any
+  // Use fallback values if WordPress data is not available
+  const acf = contactPage?.acf as any
   const headerImage = acf?.header_image
   const heading = acf?.heading || "Contact Us"
   const subheading = acf?.subheading || "Feel Free to contact us for inquiries"
